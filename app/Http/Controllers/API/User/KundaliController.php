@@ -81,7 +81,6 @@ class KundaliController extends Controller
 
                     // Check if wallet has enough amount only if is_match is false
                     $kundalicount = Kundali::where('createdBy', '=', $id)->count();
-
                     if (!$isMatchBoolean && $kundalicount>0) {
 
                         $wallet = DB::table('user_wallets')
@@ -268,7 +267,7 @@ class KundaliController extends Controller
     // }
 
   //Dynamic part
-       public function getKundliViaVedic($lang,$name, $lat, $long, $dob, $tob, $timezone, $pob, $pdfType = 'small', $match_type = 'north')
+    public function getKundliViaVedic($lang,$name, $lat, $long, $dob, $tob, $timezone, $pob, $pdfType = 'small', $match_type = 'north')
         {
 		 $api_key=DB::table('systemflag')->where('name','vedicAstroAPI')->first();
 
@@ -386,13 +385,19 @@ class KundaliController extends Controller
     // }
 
 	//dynamic part
-		public function getKundali(Request $req, $id)
+	public function getKundali(Request $req, $id)
     {
         try {
             $kundali = Kundali::where('id', $id)->first();
+            if(!$kundali){
+                return response()->json([
+                    'message' => 'Kundali not found',
+                    'status' => 404,
+                ], 404);
+            }
             $dob = date('d/m/Y', strtotime($kundali->birthDate));
             return response()->json([
-                'message' => 'Kundali update sucessfully',
+                'message' => 'Kundali get sucessfully',
                 'recordList' => ['status'=>200,'response'=>url('public/'.$kundali->pdf_link)],
                 'status' => 200,
             ], 200);
@@ -472,6 +477,12 @@ class KundaliController extends Controller
                     'message' => 'Kundali delete Sucessfully',
                     'status' => 200,
                 ], 200);
+            }
+            else {
+                return response()->json([
+                    'message' => 'Kundali not found',
+                    'status' => 404,
+                ], 404);
             }
         } catch (\Exception$e) {
             return response()->json([
