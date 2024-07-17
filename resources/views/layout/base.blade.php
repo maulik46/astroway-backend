@@ -38,7 +38,8 @@ License: You must have a valid license purchased only from themeforest(the above
     <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.9.1/firebase-messaging.js"></script>
     <script src="https://cdn.ckeditor.com/4.10.1/standard/ckeditor.js"></script>
-    <script src="{{ asset('build/assets/jquery.min.js') }}"></script>
+    <!-- <script src="{{ asset('build/assets/jquery.min.js') }}"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <style>
         .disabled {
