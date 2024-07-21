@@ -413,16 +413,18 @@ class UserController extends Controller
     public function loginAppUser(Request $req)
     {
         try {
-            $credentials = $req->only('contactNo','email');
+            $credentials = $req->only('contactNo','email','password');
 
             //Valid credential
             if($req->contactNo){
                 $validator = Validator::make($credentials, [
                     'contactNo' => 'required',
+                    'password' => 'required'
                 ]);
             }elseif($req->email){
                 $validator = Validator::make($credentials, [
                     'email' => 'required',
+                    'password' => 'required'
                 ]);
             }
 
@@ -442,8 +444,6 @@ class UserController extends Controller
                 ->select('users.id')
                 ->get();
             }
-
-
 
             if (count($id) > 0) {
 
@@ -764,11 +764,12 @@ class UserController extends Controller
                 ]);
             }
 
-
             if ($validator->fails()) {
                 DB::rollback();
                 return response()->json(['error' => $validator->messages(), 'status' => 400], 400);
             }
+
+            
             error_log($req->name);
             //Create a new user
             $user = User::create([
@@ -825,34 +826,39 @@ class UserController extends Controller
                 ]);
             }
             //Create token
-            try {
-                if (!$token = Auth::guard('api')->attempt($data)) {
-                    DB::rollback();
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Login credentials are invalid.',
-                        'data' => $data,
-                    ], 400);
-                }
-            } catch (JWTException $e) {
-                DB::rollback();
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Could not create token.',
-                ], 500);
-            }
+            // try {
+            //     $data = [...$data,...['password' => $user->password]];
+            //     if (!$token = Auth::guard('api')->attempt($data)) {
+            //         // DB::rollback();
+            //         return response()->json([
+            //             'success' => false,
+            //             'message' => 'Login credentials are invalid.',
+            //             'data' => $data,
+            //         ], 400);
+            //     }
+            // } catch (JWTException $e) {
+            //     DB::rollback();
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Could not create token.',
+            //     ], 500);
+            // }
 
-            $id = ['id' => $user->id];
+            $loginUser = $this->loginAppUser($req);
+
             DB::commit();
+
+            return $loginUser;
+
+            // $id = ['id' => $user->id];
             //Json response
-            return response()->json([
-                'success' => true,
-                'token' => $token,
-                'token_type' => 'Bearer',
-                'status' => 200,
-                'message' => 'User add sucessfully',
-                'recordList' => $id,
-            ], 200);
+            // return response()->json([
+            //     'success' => true,
+            //     'user_created' => true,
+            //     'status' => 200,
+            //     'message' => 'User add sucessfully',
+            //     'recordList' => $id,
+            // ], 200);
         } catch (\Exception$e) {
             DB::rollback();
             return response()->json([

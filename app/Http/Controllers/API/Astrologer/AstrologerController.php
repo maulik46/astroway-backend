@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+
 use Request as Req;
 
 class AstrologerController extends Controller
@@ -32,30 +34,39 @@ class AstrologerController extends Controller
      // Get Response with otl token
      public function getOtlResponse(Request $request)
      {
-        $client_id = DB::table('systemflag')->where('name', 'otplessClientId')->select('value')->first();
-        $secret_key = DB::table('systemflag')->where('name', 'otplessSecretKey')->select('value')->first();
 
-         $curl = curl_init();
+        return response()->json([
+            'authentication_details' => [
+                'phone' => [
+                    'phone_number' => $request->phone_number ?? ""
+                ]
+            ]
+        ]);
 
-         curl_setopt_array($curl, array(
-         CURLOPT_URL => 'https://auth.otpless.app/auth/userInfo',
-         CURLOPT_RETURNTRANSFER => true,
-         CURLOPT_ENCODING => '',
-         CURLOPT_MAXREDIRS => 10,
-         CURLOPT_TIMEOUT => 0,
-         CURLOPT_FOLLOWLOCATION => true,
-         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-         CURLOPT_CUSTOMREQUEST => 'POST',
-         CURLOPT_POSTFIELDS => 'token='.$request->token.'&client_id='.$client_id->value.'&client_secret='.$secret_key->value.'',
-         CURLOPT_HTTPHEADER => array(
-             'Content-Type: application/x-www-form-urlencoded'
-         ),
-         ));
+        // $client_id = DB::table('systemflag')->where('name', 'otplessClientId')->select('value')->first();
+        // $secret_key = DB::table('systemflag')->where('name', 'otplessSecretKey')->select('value')->first();
 
-         $response = curl_exec($curl);
+        // $curl = curl_init();
 
-         curl_close($curl);
-         return json_decode($response,true);
+        // curl_setopt_array($curl, array(
+        // CURLOPT_URL => 'https://auth.otpless.app/auth/userInfo',
+        // CURLOPT_RETURNTRANSFER => true,
+        // CURLOPT_ENCODING => '',
+        // CURLOPT_MAXREDIRS => 10,
+        // CURLOPT_TIMEOUT => 0,
+        // CURLOPT_FOLLOWLOCATION => true,
+        // CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        // CURLOPT_CUSTOMREQUEST => 'POST',
+        // CURLOPT_POSTFIELDS => 'token='.$request->token.'&client_id='.$client_id->value.'&client_secret='.$secret_key->value.'',
+        // CURLOPT_HTTPHEADER => array(
+        //     'Content-Type: application/x-www-form-urlencoded'
+        // ),
+        // ));
+
+        // $response = curl_exec($curl);
+
+        // curl_close($curl);
+        // return json_decode($response,true);
      }
 
 
@@ -141,6 +152,7 @@ class AstrologerController extends Controller
             $user = User::create([
                 'name' => $req->name,
                 'contactNo' => $req->contactNo,
+                'password' => Hash::make("123456"),
                 'email' => $req->email,
                 'birthDate' => $req->birthDate,
                 'gender' => $req->gender,
@@ -288,9 +300,8 @@ class AstrologerController extends Controller
     public function loginAstrologer(Request $req)
     {
         try {
-            $credentials = $req->only('contactNo');
-            $email_credentials = $req->only('email');
-            // dd($credentials);
+            $credentials = $req->only('contactNo','password');
+            $email_credentials = $req->only('email', 'password');
 
             if($req->contactNo){
                 $astrologer = DB::table('astrologers')
@@ -311,8 +322,7 @@ class AstrologerController extends Controller
                 ->get();
 
             }
-
-
+            
             if ($astrologer && count($astrologer) > 0) {
                 if (!$astrologer[0]->isVerified) {
                     return response()->json([
@@ -326,7 +336,8 @@ class AstrologerController extends Controller
                             'message' => 'Contact number is incorrect',
                             'status' => 401,
                         ], 401);
-                    }elseif($req->email && !$token = Auth::guard('api')->attempt($email_credentials)){
+                    }
+                    elseif($req->email && !$token = Auth::guard('api')->attempt($email_credentials)){
                         return response()->json([
                             'error' => false,
                             'message' => 'Email is Incorrect',
