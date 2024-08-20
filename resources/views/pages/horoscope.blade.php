@@ -31,6 +31,8 @@
             <button style="display:inline-flex;top: 4px; position: relative;" id="deletebtn"
                 class="btn btn-primary mr-2 mb-2"><i data-lucide="filter" class="deletebtn w-4 h-4 mr-2"></i>Apply</button>
         </form>
+        <a href="{{route('generate-weekly-horscope')}}" class="btn btn-primary">Generate</a>
+
     </div>
  
 

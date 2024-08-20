@@ -33,7 +33,6 @@ class UserReviewController extends Controller
             //Validate the data
             $validator = Validator::make($data, [
                 'rating' => 'required',
-                'review' => 'required',
             ]);
 
             //Send failed response if request is not valid
@@ -49,7 +48,7 @@ class UserReviewController extends Controller
             ],
             [
                 'rating' => $req->rating,
-                'review' => $req->review,
+                'review' => $req->review ?? "",
                 'astromallProductId' => $req->astromallProductId,
                 'appId' => $req->appId,
                 'createdBy' => $id,
@@ -176,7 +175,6 @@ class UserReviewController extends Controller
             $req->validate = ([
                 'userId',
                 'rating',
-                'review',
                 'astrologerId',
             ]);
             if (!Auth::guard('api')->user()) {
@@ -188,7 +186,7 @@ class UserReviewController extends Controller
             if ($userReview) {
                 $userReview->userId = $userId;
                 $userReview->rating = $req->rating;
-                $userReview->review = $req->review;
+                $userReview->review = $req->review ?? "";
                 $userReview->astrologerId = $req->astrologerId;
                 $userReview->isPublic = $req->isPublic;
                 $userReview->update();

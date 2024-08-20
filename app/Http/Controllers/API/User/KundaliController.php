@@ -43,7 +43,6 @@ class KundaliController extends Controller
 
             $kundali2 = [];
 
-
             // Create or update Kundali
             foreach ($req->kundali as $kundali) {
 
@@ -51,16 +50,21 @@ class KundaliController extends Controller
                     $kundalis = Kundali::find($kundali['id']);
 
                     if ($kundalis) {
-                        $kundaliList = $this->getKundliViaVedic(
-                            $kundali['lang'],
-                            $kundali['name'],
-                            $kundali['latitude'],
-                            $kundali['longitude'],
-                            $kundali['birthDate'],
-                            $kundali['birthTime'],
-                            $kundali['timezone'],
-                            $kundali['birthPlace']
-                        );
+                        if($req->is_pdf_generate){
+                            $kundaliList = $this->getKundliViaVedic(
+                                $kundali['lang'],
+                                $kundali['name'],
+                                $kundali['latitude'],
+                                $kundali['longitude'],
+                                $kundali['birthDate'],
+                                $kundali['birthTime'],
+                                $kundali['timezone'],
+                                $kundali['birthPlace']
+                            );
+                        }
+                        else{
+                            $kundaliList = null;
+                        }
 
                         $kundalis->name = $kundali['name'];
                         $kundalis->gender = $kundali['gender'];
@@ -96,17 +100,21 @@ class KundaliController extends Controller
                             DB::table('user_wallets')
                                 ->where('userId', $id)
                                 ->update(['amount' => $updatedAmount]);
-
-                            $kundaliList = $this->getKundliViaVedic(
-                            $kundali['lang'],
-                            $kundali['name'],
-                            $kundali['latitude'],
-                            $kundali['longitude'],
-                            $kundali['birthDate'],
-                            $kundali['birthTime'],
-                            $kundali['timezone'],
-                            $kundali['birthPlace']
-                        );
+                                if($req->is_pdf_generate){
+                                    $kundaliList = $this->getKundliViaVedic(
+                                        $kundali['lang'],
+                                        $kundali['name'],
+                                        $kundali['latitude'],
+                                        $kundali['longitude'],
+                                        $kundali['birthDate'],
+                                        $kundali['birthTime'],
+                                        $kundali['timezone'],
+                                        $kundali['birthPlace']
+                                    );
+                                }
+                                else{
+                                    $kundaliList = "";
+                                }
 
 
 
@@ -306,7 +314,6 @@ class KundaliController extends Controller
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         if ($httpCode == 200) {
             $response = json_decode($response);
-
 
 
             $timestamp = now()->timestamp;

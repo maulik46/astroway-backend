@@ -32,7 +32,7 @@ define('EXPRESSION', '/(?=[A-Z])/');
         @endphp
         @if($dashboardPage)
         <a href="/admin/dashboard" class="logo -intro-x hidden md:flex xl:w-[180px] block">
-            <img alt="AstroGuru image" class="logo__image w-6" src="/{{ $logo->value }}"
+            <img alt="AstroGuru image" class="logo__image w-6" src="{{url($logo->value)}}"
                 style="height: 50px;width: 100%; max-width: 50px;border-radius:50%">
             <span class="logo__text text-white text-lg ml-5 mt-2.5" style="vertical-align: center">
                 {{ $appName->value }}
@@ -40,7 +40,7 @@ define('EXPRESSION', '/(?=[A-Z])/');
         </a>
         @else
         <a class="logo -intro-x hidden md:flex xl:w-[180px] block">
-            <img alt="AstroGuru image" class="logo__image w-6" src="/{{ $logo->value }}"
+            <img alt="AstroGuru image" class="logo__image w-6" src="{{url($logo->value)}}"
                 style="height: 50px;width: 100%; max-width: 50px;border-radius:50%">
             <span class="logo__text text-white text-lg ml-5 mt-2.5" style="vertical-align: center">
                 {{ $appName->value }}

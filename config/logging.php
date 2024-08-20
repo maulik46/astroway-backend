@@ -3,7 +3,7 @@
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
-define('LOGROUTE', "logs/laravel.log");
+
 return [
 
     /*
@@ -59,13 +59,13 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path(LOGROUTE),
+            'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path(LOGROUTE),
+            'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
         ],
@@ -115,7 +115,7 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path(LOGROUTE),
+            'path' => storage_path('logs/laravel.log'),
         ],
     ],
 

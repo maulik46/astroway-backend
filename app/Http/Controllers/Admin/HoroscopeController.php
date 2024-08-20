@@ -31,6 +31,14 @@ class HoroscopeController extends Controller
     public function generateDailyHorscope()
     {
 
+        $currDate = date('Y-m-d');
+        $isCreated = Horoscope::where('date',$currDate)->where('type',1)->exists();
+
+        if($isCreated){
+            return back()->with('alert','Already generated');
+        }
+        // create horscope
+
         $api_key=DB::table('systemflag')->where('name','vedicAstroAPI')->first();
 
         $currDate = date('d/m/Y');
@@ -77,11 +85,21 @@ class HoroscopeController extends Controller
 
 
         }
-        return response()->json(['message' => 'Horoscope stored successfully']);
+        return back();
+        // return response()->json(['message' => 'Horoscope stored successfully']);
     }
 
     public function generateWeeklyHorscope()
     {
+        $isCreated = Horoscope::where('start_date',$this->aDate['startdate'])
+        ->where('end_date',$this->aDate['enddate'])
+        ->where('type',2)
+        ->exists();
+
+        if($isCreated){
+            return back()->with('alert','Already generated');
+        }
+
         $api_key=DB::table('systemflag')->where('name','vedicAstroAPI')->first();
         $currDate = date('Y-m-d');
         for ($i=1; $i <= 12 ; $i++) {
@@ -122,11 +140,20 @@ class HoroscopeController extends Controller
                 ]);
             }
         }
-        return response()->json(['message' => 'Horoscope stored successfully']);
+        return back();
+
+        // return response()->json(['message' => 'Horoscope stored successfully']);
     }
 
     public function generateYearlyHorscope()
     {
+        $currYear = date('Y');
+        $isCreated = Horoscope::whereYear('created_at',$currYear)->where('type',3)->exists();
+
+        if($isCreated){
+            return back()->with('alert','Already generated');
+        }
+        
         $api_key=DB::table('systemflag')->where('name','vedicAstroAPI')->first();
         $currDate = date('Y-m-d');
         for ($i=1; $i <= 12 ; $i++) {
@@ -215,7 +242,8 @@ class HoroscopeController extends Controller
             }
 
         }
-        return response()->json(['message' => 'Horoscope stored successfully']);
+
+        return back();
     }
 
     public function getThisWeekDate()
