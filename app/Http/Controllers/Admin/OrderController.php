@@ -156,7 +156,22 @@ class OrderController extends Controller
                     ->select('user_device_details.*')
                     ->get();
                 if ($userDeviceDetail && count($userDeviceDetail) > 0) {
-                    $title = $request->status == 'Confirmed' ? 'Your Order has been accept from admin' : 'Your Order Delivered Successfully';
+                    if($request->status == 'Confirmed'){
+                        $title = 'Your Order has been accepted';
+                    }
+                    else if($request->status == 'Packed'){
+                        $title = 'Your Order has been packed';
+                    }
+                    else if($request->status == 'Dispatched'){
+                        $title = 'Your Order has been Dispatched';
+                    }
+                    else if($request->status == 'Delivered'){
+                        $title = 'Your Order Delivered Successfully';
+                    }
+                    else {
+                        $title = 'Your Order Delivered Successfully';
+                    }
+                    
                     FCMService::send(
                         $userDeviceDetail,
                         [

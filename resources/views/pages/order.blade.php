@@ -81,7 +81,7 @@
                                 {{ $currency->value }}{{ $request->payableAmount }}
                             </td>
                             <td class="text-center">
-                                {{ $currency->value }}{{ number_format($request->gstAmount, 2, '.', ',') }}
+                                {{ $currency->value }} @if(is_numeric($request->gstAmount)) {{ number_format($request->gstAmount, 2, '.', ',') }} @endif
                             </td>
                             <td class="text-center">
                                 {{ date('d-m-Y', strtotime($request->created_at)) ? date('d-m-Y h:i', strtotime($request->created_at)) : '--' }}
