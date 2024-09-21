@@ -412,5 +412,7 @@ Route::post('addStory', [AstrologerStoryController::class, 'addStory'])->name('a
 Route::post('getStory', [AstrologerStoryController::class, 'getStory'])->name('getStory');
 
 // view Count
+
 Route::post('clickStory', [AstrologerStoryController::class, 'clickStory'])->name('clickStory');
+
 Route::post('getAstrologerStory', [AstrologerStoryController::class, 'getAstrologerStory'])->name('getAstrologerStory');
