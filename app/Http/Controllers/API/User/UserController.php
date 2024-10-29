@@ -334,6 +334,7 @@ class UserController extends Controller
             $user = User::find($id);
             $userWallet = UserWallet::query()
                 ->where('userId', '=', $id)
+                ->select('amount')
                 ->get();
             if ($userWallet && count($userWallet) > 0) {
                 $user->totalWalletAmount = $userWallet[0]->amount;
@@ -394,7 +395,7 @@ class UserController extends Controller
             $id = $req->id ? $req->id : $userId;
             error_log($req->id);
             $user = User::find($id);
-
+            $user->delete();
             if ($user) {
                 return response()->json(['message' => 'User delete Sucessfully', 'status' => 200], 200);
             } else {

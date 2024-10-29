@@ -550,6 +550,7 @@ class ChatRequestController extends Controller
             $deduction = 0;
             $charge = Astrologer::query()
                 ->where('id', '=', $chatData[0]->astrologerId)
+                ->select('charge', 'totalOrder', 'id', 'userId')
                 ->get();
 
             if (!$chatData[0]->isFreeSession) {
@@ -592,6 +593,7 @@ class ChatRequestController extends Controller
             if ($charge[0]->charge > 0) {
                 $wallet = DB::table('user_wallets')
                     ->where('userId', '=', $chatData[0]->userId)
+                    ->select('id','userId','amount')
                     ->get();
 
                 $wallets = array(
@@ -600,9 +602,6 @@ class ChatRequestController extends Controller
                     'createdBy' => $id,
                     'modifiedBy' => $id,
                 );
-
-
-
 
                 if ($wallet && count($wallet) > 0) {
                     DB::table('user_wallets')
@@ -614,6 +613,7 @@ class ChatRequestController extends Controller
 
                 $astrologerWallet = DB::table('user_wallets')
                     ->where('userId', $chatData[0]->astrologerUserId)
+                    ->select('amount')
                     ->get();
                 $astrologerWall = array(
                     'userId' => $chatData[0]->astrologerUserId,
@@ -821,17 +821,29 @@ class ChatRequestController extends Controller
             }
             $sId = DB::Table('callrequest')
                 ->where('sId', '=', $req->sId)
+                ->whereNotNull('sId')
                 ->get();
-            if (!($sId && count($sId) > 0)) {
+
+            // if(count($sId) > 0){
+            //     \Log::info("delete sid record >>>",[$req->sId]);
+
+            //     DB::Table('callrequest')
+            //     ->where('sId', '=', $req->sId)
+            //     ->delete();
+            // }
+        
+            if (count($sId) == 0) {
                 $totalMin = $req->totalMin / 60;
                 $totalMin = round($totalMin);
                 $charge = Astrologer::query()
                     ->where('id', '=', $req->astrologerId)
+                    ->select('userId','charge','totalOrder')
                     ->get();
-                $deduction = $totalMin * $charge[0]->charge;
+                $deduction = $totalMin * $charge[0]->charge; 
                 $commission = DB::table('commissions')
                     ->where('commissionTypeId', '=', '1')
                     ->where('astrologerId', '=', $req->astrologerId)
+                    ->select('id','commission')
                     ->get();
                 if ($commission && count($commission) > 0) {
                     $adminCommission = ($commission[0]->commission * $deduction) / 100;
@@ -863,10 +875,12 @@ class ChatRequestController extends Controller
                 $charge[0]->totalOrder = $charge[0]->totalOrder ? $charge[0]->totalOrder + 1 : 1;
                 $astrologerUserId = DB::table('astrologers')
                     ->where('id', '=', $req->astrologerId)
+                    ->select('userId')
                     ->get();
                 if ($charge[0]->charge) {
                     $wallet = DB::table('user_wallets')
                         ->where('userId', '=', $req->userId)
+                        ->select('amount', 'id')
                         ->get();
                     $wallets = array(
                         'amount' => $wallet[0]->amount - $deduction,
@@ -963,7 +977,9 @@ class ChatRequestController extends Controller
                     'status' => 200,
                     'recordList' => $data,
                 ], 200);
-            } else {
+            } 
+            else {
+                
                 return response()->json([
                     'message' => 'Chat Request End Successfully',
                     'status' => 200,
@@ -1019,8 +1035,8 @@ class ChatRequestController extends Controller
                 'userId' => $id,
             );
 
-            $intake = DB::table('intakeform')->where('userId', '=', $id)->get();
-            if ($intake && count($intake) > 0) {
+            $intake = DB::table('intakeform')->where('userId', '=', $id)->exists();
+            if ($intake) {
                 $intakeForm = DB::table('intakeform')->update($intakeForm);
             } else {
                 DB::table('intakeform')->insert($intakeForm);
@@ -1097,15 +1113,12 @@ class ChatRequestController extends Controller
             } else {
                 $id = Auth::guard('api')->user()->id;
             }
-            $session = DB::table('chatrequest')
+            $isAvailable = DB::table('chatrequest')
                 ->where('userId', '=', $id)
                 ->where('astrologerId', '=', $req->astrologerId)
                 ->where('chatStatus', '=', 'Pending')
-                ->get();
-            $isAvailable = false;
-            if ($session && count($session) > 0) {
-                $isAvailable = true;
-            }
+                ->exists();
+           
             return response()->json([
                 'status' => 200,
                 'recordList' => $isAvailable,
@@ -1127,15 +1140,12 @@ class ChatRequestController extends Controller
             } else {
                 $id = Auth::guard('api')->user()->id;
             }
-            $session = DB::table('callrequest')
+            $isAvailable = DB::table('callrequest')
                 ->where('userId', '=', $id)
                 ->where('astrologerId', '=', $req->astrologerId)
                 ->where('callStatus', '=', 'Pending')
-                ->get();
-            $isAvailable = false;
-            if ($session && count($session) > 0) {
-                $isAvailable = true;
-            }
+                ->exists();
+           
             return response()->json([
                 'status' => 200,
                 'recordList' => $isAvailable,
@@ -1186,8 +1196,8 @@ class ChatRequestController extends Controller
                 $id = Auth::guard('api')->user()->id;
             }
             $isAddNewRequest = true;
-            $isChatRequest = DB::table('chatrequest')->where('userId', $id)->where('chatStatus', '=', 'Pending')->first();
-            $isCallRequest = DB::table('callrequest')->where('userId', $id)->where('callStatus', '=', 'Pending')->first();
+            $isChatRequest = DB::table('chatrequest')->where('userId', $id)->where('chatStatus', '=', 'Pending')->exists();
+            $isCallRequest = DB::table('callrequest')->where('userId', $id)->where('callStatus', '=', 'Pending')->exists();
             if ($isChatRequest || $isCallRequest) {
                 $isAddNewRequest = false;
             }

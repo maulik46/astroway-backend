@@ -93,6 +93,7 @@ class GiftController extends Controller
 
             $gift = DB::Table('gifts')
                 ->where('id', '=', $req->giftId)
+                ->select('amount')
                 ->get();
 
             AstrologerGift::create([
@@ -106,6 +107,7 @@ class GiftController extends Controller
 
             $userWallet = DB::table('user_wallets')
                 ->where('userId', '=', $id)
+                ->select('amount')
                 ->get();
 
             $astrologerUserId = DB::table('astrologers')
@@ -118,6 +120,7 @@ class GiftController extends Controller
                 ->get();
             $astrologerWallet = DB::table('user_wallets')
                 ->where('userId', '=', $astrologerUserId[0]->userId)
+                ->select('amount')
                 ->get();
 
             $deduction = $userWallet[0]->amount - $gift[0]->amount;

@@ -4,7 +4,8 @@ namespace App\Http\Controllers\API\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminModel\Language;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class LanguageController extends Controller
 {
@@ -12,8 +13,28 @@ class LanguageController extends Controller
     public function getLanguages()
     {
         try {
+            // $recordList = json_decode(File::get(public_path('country.json')), true);
 
-            $language = Language::all();
+            // return response()->json([
+            //     'recordList' => [
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList, 
+            //         ...$recordList
+            //     ],
+            //     'status' => 200,
+            // ],200);
+
+            // $language = Language::all();
+            $language = DB::table('languages')
+            ->select('id','languageName','languageCode','language_sign')
+            ->get();
+            
             return response()->json([
                 'recordList' => $language,
                 'status' => 200,

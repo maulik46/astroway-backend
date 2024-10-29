@@ -19,11 +19,13 @@ class AssistantChatController extends Controller
             $chatData = DB::table('assistantchat')
                 ->where('senderId', '=', $req->senderId)
                 ->where('receiverId', '=', $req->receiverId)
+                ->select('chatId')
                 ->get();
             if (!($chatData && count($chatData) > 0)) {
                 $partnerChatData = DB::table('assistantchat')
                     ->where('senderId', '=', $req->receiverId)
                     ->where('receiverId', '=', $req->senderId)
+                    ->select('chatId')
                     ->get();
                 if (!($partnerChatData && count($partnerChatData) > 0)) {
                     $chatId = $req->senderId . '_' . $req->receiverId;
@@ -129,18 +131,16 @@ class AssistantChatController extends Controller
                 ->where('userId', '=', $id)
                 ->where('chatStatus', '=', 'Completed')
                 ->where('deduction', '>', 0)
-                ->limit(1)
-                ->get();
+                ->exists();
 
-            if (!($assistantChat && count($assistantChat) > 0)) {
+            if (!$assistantChat) {
                 $callAssistantChat = DB::table('callrequest')
                     ->where('astrologerId', '=', $req->astrologerId)
                     ->where('userId', '=', $id)
                     ->where('callStatus', '=', 'Completed')
                     ->where('deduction', '>', 0)
-                    ->limit(1)
-                    ->get();
-                if ($callAssistantChat && count($callAssistantChat) > 0) {
+                    ->exists();
+                if (!$callAssistantChat) {
                     $isAvailable = true;
                 } else {
                     $isAvailable = false;

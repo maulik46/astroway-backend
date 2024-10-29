@@ -16,7 +16,7 @@ class CustomerHomeController extends Controller
 {
     public function getCustomerHome()
     {
-        // try {
+        try {
             
             $banner = Banner::query()->join('banner_types','banner_types.id','banners.bannerTypeId')->where('banners.isActive', '=', '1')->whereDate('fromDate', '<=', Carbon::today())->whereDate('ToDate', '>=', Carbon::today())
                 ->limit(10)->select('banners.*','banner_types.name as bannerType')->orderBy('banners.id', 'DESC')->get();
@@ -77,12 +77,12 @@ class CustomerHomeController extends Controller
                 ], 200);
             }
 
-        // } catch (\Exception$e) {
-        //     return response()->json([
-        //         'error' => false,
-        //         'message' => $e->getMessage(),
-        //         'status' => 500,
-        //     ], 500);
-        // }
+        } catch (\Exception$e) {
+            return response()->json([
+                'error' => false,
+                'message' => $e->getMessage(),
+                'status' => 500,
+            ], 500);
+        }
     }
 }

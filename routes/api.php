@@ -239,6 +239,9 @@ Route::post('kundali/removeFromTrackPlanet', [KundaliController::class, 'removeF
 Route::post('kundali/addForTrackPlanet', [KundaliController::class, 'addForTrackPlanet']);
 Route::post('kundali/getForTrackPlanet', [KundaliController::class, 'getForTrackPlanet']);
 Route::post('get/panchang', [KundaliController::class, 'getPanchang']);
+
+Route::post('getkundaliPdfdata', [KundaliController::class, 'getkundaliPdfdata']);
+
 //Order address
 Route::post('orderAddress/add', [OrderAddressController::class, 'addOrderAddress'])->name('api.addOrderAddress');
 Route::post('orderAddress/update/{id}', [OrderAddressController::class, 'updateOrderAddress']);

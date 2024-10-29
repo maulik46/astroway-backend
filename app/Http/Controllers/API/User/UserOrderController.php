@@ -60,12 +60,13 @@ class UserOrderController extends Controller
 
             $wallet = DB::table('user_wallets')
                 ->where('userId', '=', $id)
-                ->get();
+                ->select('amount','id')
+                ->first();
             $wallets = array(
-                'amount' => $wallet[0]->amount - $req->totalPayable,
+                'amount' => $wallet->amount - $req->totalPayable,
             );
             DB::table('user_wallets')
-                ->where('id', $wallet[0]->id)
+                ->where('id', $wallet->id)
                 ->update($wallets);
 
             $transaction = array(
@@ -100,7 +101,7 @@ class UserOrderController extends Controller
             } else {
                 $id = Auth::guard('api')->user()->id;
             }
-            $order = DB::table('order_request')->where('id', '=', $req->id)->get();
+            $order = DB::table('order_request')->where('id', '=', $req->id)->select('totalPayable')->first();
             $data = array(
                 'orderStatus' => 'Cancelled',
             );
@@ -109,7 +110,7 @@ class UserOrderController extends Controller
                 ->where('userId', '=', $id)
                 ->get();
             $wallets = array(
-                'amount' => $wallet[0]->amount + $order[0]->totalPayable,
+                'amount' => $wallet[0]->amount + $order->totalPayable,
             );
             DB::table('user_wallets')
                 ->where('id', $wallet[0]->id)
@@ -117,13 +118,13 @@ class UserOrderController extends Controller
 
             $transaction = array(
                 'userId' => $id,
-                'amount' => $order[0]->totalPayable,
+                'amount' => $order->totalPayable,
                 'isCredit' => true,
                 "transactionType" => 'astromallOrder',
 				'created_at' => Carbon::now(),
 				'updated_at' => Carbon::now(),
             );
-            $res = array('totalPayable' => $order[0]->totalPayable);
+            $res = array('totalPayable' => $order->totalPayable);
             DB::table('wallettransaction')->insert($transaction);
             return response()->json([
                 'message' => 'User Order Cancel sucessfully',

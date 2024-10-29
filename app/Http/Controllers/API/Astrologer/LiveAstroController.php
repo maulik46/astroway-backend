@@ -48,7 +48,7 @@ class LiveAstroController extends Controller
                 'liveChatToken' => $req->liveChatToken,
             ]);
             $userDeviceDetail = DB::table('user_device_details')->join('user_roles', 'user_roles.userId', 'user_device_details.userId')->where('user_roles.roleId', 3)->get();
-            $astrologer = DB::table('astrologers')->where('id', $req->astrologerId)->get();
+            $astrologer = DB::table('astrologers')->where('id', $req->astrologerId)->select('name')->get();
             $astrologer_data = DB::table('astrologers')
             ->join('liveastro','liveastro.astrologerId','astrologers.id')
             ->where('astrologers.id', $req->astrologerId)
@@ -243,6 +243,7 @@ class LiveAstroController extends Controller
         try {
             $token = DB::table('liveastro')
                 ->where('channelName', '=', $req->channelName)
+                ->select('token')
                 ->get();
             return response()->json([
                 'message' => 'Get Token Successfully',
@@ -275,6 +276,7 @@ class LiveAstroController extends Controller
                 foreach ($upcomingAstrologer as $upcoming) {
                     $astrologerAvailability = DB::table('astrologer_availabilities')
                         ->where('astrologerId', '=', $upcoming->id)
+                        ->select('day','fromTime','toTime')
                         ->get();
 
                     $working = [];
@@ -342,6 +344,7 @@ class LiveAstroController extends Controller
                 foreach ($upcomingAstrologer as $upcoming) {
                     $astrologerAvailability = DB::table('astrologer_availabilities')
                         ->where('astrologerId', '=', $upcoming->id)
+                        ->select('day','fromTime','toTime')
                         ->get();
 
                     $working = [];

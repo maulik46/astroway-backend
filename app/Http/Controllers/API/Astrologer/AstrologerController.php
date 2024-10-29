@@ -1184,6 +1184,7 @@ class AstrologerController extends Controller
         try {
             $skillId = DB::table('skills')
                 ->where('name', '=', 'Psychologist')
+                ->select('id')
                 ->get();
             $id = $skillId[0]->id;
             $counsellor = DB::table('astrologers')
@@ -1201,8 +1202,8 @@ class AstrologerController extends Controller
             $isFreeChat = DB::table('systemflag')->where('name', 'FirstFreeChat')->select('value')->first();
             if ($isFreeChat->value == 1) {
                 if ($req->userId) {
-                    $isChatRequest = DB::table('chatrequest')->where('userId', $req->userId)->where('chatStatus', '=', 'Completed')->first();
-                    $isCallRequest = DB::table('callrequest')->where('userId', $req->userId)->where('callStatus', '=', 'Completed')->first();
+                    $isChatRequest = DB::table('chatrequest')->where('userId', $req->userId)->where('chatStatus', '=', 'Completed')->exists();
+                    $isCallRequest = DB::table('callrequest')->where('userId', $req->userId)->where('callStatus', '=', 'Completed')->exists();
                     if ($isChatRequest || $isCallRequest) {
                         $isFreeAvailable = false;
                     } else {
@@ -1341,8 +1342,8 @@ class AstrologerController extends Controller
             $isFreeChat = DB::table('systemflag')->where('name', 'FirstFreeChat')->select('value')->first();
             if ($isFreeChat->value == 1) {
                 if ($req->userId) {
-                    $isChatRequest = DB::table('chatrequest')->where('userId', $req->userId)->where('chatStatus', '=', 'Completed')->first();
-                    $isCallRequest = DB::table('callrequest')->where('userId', $req->userId)->where('callStatus', '=', 'Completed')->first();
+                    $isChatRequest = DB::table('chatrequest')->where('userId', $req->userId)->where('chatStatus', '=', 'Completed')->exists();
+                    $isCallRequest = DB::table('callrequest')->where('userId', $req->userId)->where('callStatus', '=', 'Completed')->exists();
                     if ($isChatRequest || $isCallRequest) {
                         $isFreeAvailable = false;
                     } else {
@@ -1386,6 +1387,7 @@ class AstrologerController extends Controller
                 $astrologer[0]->astrologerCategoryId = $category;
                 $astrologerAvailability = DB::table('astrologer_availabilities')
                     ->where('astrologerId', '=', $req->astrologerId)
+                    ->select('day','fromTime','toTime')
                     ->get();
                 if ($astrologerAvailability && count($astrologerAvailability) > 0) {
                     $day = [];
@@ -1711,8 +1713,8 @@ class AstrologerController extends Controller
                     $follow = DB::table('astrologer_followers')
                         ->where('userId', '=', $req->userId)
                         ->where('astrologerId', '=', $req->astrologerId)
-                        ->get();
-                    if ($follow && count($follow) > 0) {
+                        ->exists();
+                    if ($follow) {
                         $astrologer[0]->isFollow = true;
                     } else {
                         $astrologer[0]->isFollow = false;
@@ -1785,8 +1787,8 @@ class AstrologerController extends Controller
                 $isFreeChat = DB::table('systemflag')->where('name', 'FirstFreeChat')->select('value')->first();
                 if ($isFreeChat->value == 1) {
                     if ($req->userId) {
-                        $isChatRequest = DB::table('chatrequest')->where('userId', $req->userId)->where('chatStatus', '=', 'Completed')->first();
-                        $isCallRequest = DB::table('callrequest')->where('userId', $req->userId)->where('callStatus', '=', 'Completed')->first();
+                        $isChatRequest = DB::table('chatrequest')->where('userId', $req->userId)->where('chatStatus', '=', 'Completed')->exists();
+                        $isCallRequest = DB::table('callrequest')->where('userId', $req->userId)->where('callStatus', '=', 'Completed')->exists();
                         if ($isChatRequest || $isCallRequest) {
                             $isFreeAvailable = false;
                         } else {
@@ -1801,7 +1803,14 @@ class AstrologerController extends Controller
                 ->groupBy('astrologerId')
                 ->avg('rating');
 
-                $consultant = DB::table('astrologers')->where('isActive', 1)->where('isVerified', 1)->where('isDelete', 0)->where('id', '!=', $req->astrologerId)->select('profileImage', 'name', 'charge', 'primarySkill', 'id')->orderBy('id', 'DESC')->get();
+                $consultant = DB::table('astrologers')
+                ->where('isActive', 1)
+                ->where('isVerified', 1)
+                ->where('isDelete', 0)
+                ->where('id', '!=', $req->astrologerId)
+                ->select('profileImage', 'name', 'charge', 'primarySkill', 'id')
+                ->orderBy('id', 'DESC')
+                ->get();
                 $similiar = [];
                 if ($consultant && count($consultant) > 0) {
                     for ($i = 0; $i < count($consultant); $i++) {
@@ -2280,6 +2289,7 @@ class AstrologerController extends Controller
                     $astrologer[0]->astrologerCategoryId = $category;
                     $astrologerAvailability = DB::table('astrologer_availabilities')
                         ->where('astrologerId', '=', $astrologer[0]->id)
+                        ->select('day','fromTime','toTime')
                         ->get();
                     $working = [];
                     if ($astrologerAvailability && count($astrologerAvailability) > 0) {
@@ -2359,12 +2369,13 @@ class AstrologerController extends Controller
             $data = Auth::guard('api')->user();
             $userWallet = UserWallet::query()
             ->where('userId', '=', $data['id'])
+            ->select('amount')
             ->get();
-                if ($userWallet && count($userWallet) > 0) {
-                    $data->totalWalletAmount = $userWallet[0]->amount;
-                } else {
-                    $data->totalWalletAmount = 0;
-                }
+            if ($userWallet && count($userWallet) > 0) {
+                $data->totalWalletAmount = $userWallet[0]->amount;
+            } else {
+                $data->totalWalletAmount = 0;
+            }
             return response()->json([
                 'status' => 200,
                 "message" => "Get Profile Successfully",

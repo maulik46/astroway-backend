@@ -175,6 +175,7 @@ class AstrologerAvailabilityController extends Controller
             }
             $astrologerAvailability = DB::table('astrologer_availabilities')
                 ->where('astrologerId', '=', $req->astrologerId)
+                ->select('day','fromTime','toTime')
                 ->get();
             $working = [];
             if ($astrologerAvailability && count($astrologerAvailability) > 0) {

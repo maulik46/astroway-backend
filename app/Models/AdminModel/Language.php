@@ -12,6 +12,8 @@ class Language extends Model
     protected $fillable = [
         'languageName',
         'createdBy',
-        'modifiedBy'
+        'modifiedBy',
+        'languageCode',
+        'language_sign',
     ];
 }

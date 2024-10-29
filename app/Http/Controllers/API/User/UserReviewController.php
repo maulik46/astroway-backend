@@ -290,11 +290,14 @@ class UserReviewController extends Controller
                 'reviewId' => $req->id,
             );
             DB::table('blockuserreview')->insert($data);
-            $userReview = DB::table('user_reviews')->where('id', '=', $req->id)->get();
+            $userReview = DB::table('user_reviews')
+            ->where('id', '=', $req->id)
+            ->select('astrologerId','astromallProductId')
+            ->first();
             return response()->json([
                 'message' => 'User review Block Successfully',
                 'status' => 200,
-                'recordList' => $userReview[0]->astrologerId ? $userReview[0]->astrologerId : $userReview[0]->astromallProductId,
+                'recordList' => $userReview->astrologerId ? $userReview->astrologerId : $userReview->astromallProductId,
             ], 200);
         } catch (\Exception$e) {
             return response()->json([
