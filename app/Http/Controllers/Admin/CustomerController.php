@@ -76,7 +76,7 @@ class CustomerController extends Controller
                             File::makeDirectory(DESTINATIONPATH, 0755, true);
                         }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'profile_' . $user->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($path);
