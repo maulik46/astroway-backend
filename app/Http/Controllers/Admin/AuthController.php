@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 define('LOGINPATH', '/admin/login');
-
+define('DESTINATIONPATH', 'public/storage/images/');
 class AuthController extends Controller
 {
     /**
@@ -120,8 +120,11 @@ class AuthController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'profile_' . $user->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($user->profile);

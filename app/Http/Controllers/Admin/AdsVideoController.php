@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 define('LOGINPATH', '/admin/login');
+define('DESTINATIONPATH', 'public/storage/images/');
 
 class AdsVideoController extends Controller
 {
@@ -41,8 +42,11 @@ class AdsVideoController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'coverImage_' . $adsVideo->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($path);
@@ -120,8 +124,11 @@ class AdsVideoController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
-                            $destinationpath = 'public/storage/images/';
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'coverImage_' . $req->filed_id . $time;
                             $path = $destinationpath . $imageName . $time . '.png';
                             File::delete($adsVideo->coverImage);

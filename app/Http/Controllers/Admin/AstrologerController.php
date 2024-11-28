@@ -27,6 +27,7 @@ use PDF;
 use Response;
 
 define('LOGINPATH', '/admin/login');
+define('DESTINATIONPATH', 'public/storage/images/');
 
 class AstrologerController extends Controller
 {
@@ -678,8 +679,11 @@ class AstrologerController extends Controller
                 if (Str::contains($profileImage, 'storage')) {
                     $path = $profileImage;
                 } else {
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
                     $time = Carbon::now()->timestamp;
-                    $destinationpath = 'public/storage/images/';
+                    $destinationpath = DESTINATIONPATH;
                     $imageName = 'astrologer_' . $req->id . $time;
                     $path = $destinationpath . $imageName . '.png';
                     $isFile = explode('.', $path);
@@ -920,8 +924,11 @@ class AstrologerController extends Controller
                 if (Str::contains($profileImage, 'storage')) {
                     $path = $profileImage;
                 } else {
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
                     $time = Carbon::now()->timestamp;
-                    $destinationpath = 'public/storage/images/';
+                    $destinationpath = DESTINATIONPATH;
                     $imageName = 'astrologer_' . $req->id . $time;
                     $path = $destinationpath . $imageName . '.png';
                     $isFile = explode('.', $path);

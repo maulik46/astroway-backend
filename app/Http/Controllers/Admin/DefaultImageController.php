@@ -68,6 +68,9 @@ class DefaultImageController extends Controller
                     if (Str::contains($profileImage, 'storage')) {
                         $path = $profileImage;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
 
                         $imageName = 'defaultprofile_' . $default->id;
@@ -109,6 +112,9 @@ class DefaultImageController extends Controller
                     if (Str::contains($profileImage, 'storage')) {
                         $path = $profileImage;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
                         $imageName = 'defaultprofile_' . $req->id;
                         $path = DESTINATIONPATH . $imageName . $time . '.' . $extension;

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 define('LOGINPATH', '/admin/login');
+define('DESTINATIONPATH', 'public/storage/images/');
 class AstrologerCategoryController extends Controller
 {
     //Add Astrologer API
@@ -54,8 +55,11 @@ class AstrologerCategoryController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'astrologerCategory_' . $astrologerCategory->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($path);
@@ -128,8 +132,11 @@ class AstrologerCategoryController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
-                            $destinationpath = 'public/storage/images/';
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'astrologerCategory_' . $request->filed_id;
                             $path = $destinationpath . $imageName . $time . '.png';
                             File::delete($astrologerCategory->image);

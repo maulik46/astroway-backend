@@ -25,8 +25,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 
 use Request as Req;
+
+define('DESTINATIONPATH', 'public/storage/images/');
 
 class AstrologerController extends Controller
 {
@@ -213,8 +216,11 @@ class AstrologerController extends Controller
                 'videoCallRate' => $req->videoCallRate,
             ]);
             if ($req->profileImage) {
+                if (!File::exists(DESTINATIONPATH)) {
+                    File::makeDirectory(DESTINATIONPATH, 0755, true);
+                }
                 $time = Carbon::now()->timestamp;
-                $destinationpath = 'public/storage/images/';
+                $destinationpath = DESTINATIONPATH;
                 $imageName = 'astrologer_' . $user->id . $time;
                 $path = $destinationpath . $imageName . '.png';
                 file_put_contents($path, base64_decode($req->profileImage));
@@ -923,8 +929,11 @@ class AstrologerController extends Controller
                 if (Str::contains($req->profileImage, 'storage')) {
                     $path = $req->profileImage;
                 } else {
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
                     $time = Carbon::now()->timestamp;
-                    $destinationpath = 'public/storage/images/';
+                    $destinationpath = DESTINATIONPATH;
                     $imageName = 'astrologer_' . $req->id . $time;
                     $path = $destinationpath . $imageName . '.png';
                     $isFile = explode('.', $path);

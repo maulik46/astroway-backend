@@ -19,7 +19,7 @@ use PDF;
 use Response;
 
 define('LOGINPATH', '/admin/login');
-
+define('DESTINATIONPATH', 'public/storage/images/');
 class CustomerController extends Controller
 {
     public $limit = 15;
@@ -72,6 +72,9 @@ class CustomerController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
                         $destinationpath = 'public/storage/images/';
                         $imageName = 'profile_' . $user->id;
@@ -201,7 +204,10 @@ class CustomerController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
-                            $destinationpath = 'public/storage/images/';
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'user_' . $req->id . $time;
                             $path = $destinationpath . $imageName . '.png';
                             File::delete($user->profile);

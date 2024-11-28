@@ -602,6 +602,46 @@ class KundaliController extends Controller
             $paryantardasha = $req->paryantardasha;
             $shookshamadasha = $req->shookshamadasha;
 
+            $divChart = $req->divChart;
+            $divChartResponseType = $req->divChartResponseType;
+            $divChartTransitDate = $req->divChartTransitDate;
+            $divChartYear = $req->divChartYear;
+
+            $chartImageColor = $req->chartImageColor;
+            $chartImageStyle = $req->chartImageStyle;
+            $chartImageFontSize = $req->chartImageFontSize;
+            $chartImageFontStyle = $req->chartImageFontStyle;
+            $chartImageSize = $req->chartImageSize;
+            $chartImageStroke = $req->chartImageStroke;
+            $chartImageFormat = $req->chartImageFormat;
+
+
+            // $vv = Http::get('https://api.vedicastroapi.com/v3-json/horoscope/chart-image', [
+            //     'dob' => $birthDate,
+            //     'tob' => $birthTime,
+            //     'tz' => $timezone,
+            //     'lat' => $latitude,
+            //     'lon' => $longitude,
+            //     'div' => $divChart,
+            //     'api_key' => $api_key,
+            //     'lang' => $language,
+            //     'color' => $chartImageColor,
+            //     'style' => $chartImageStyle,
+            //     'font_size' => $chartImageFontSize,
+            //     'font_style' => $chartImageFontStyle,
+            //     'size' => $chartImageSize,
+            //     'stroke' => $chartImageStroke,
+            //     'format' => $chartImageFormat,
+            //     'year' => $divChartYear,
+            //     'transit_date' => $divChartTransitDate,
+            // ]);
+            
+            // dd(
+            //     $vv->json(), 
+            //     json_encode($vv->body()), 
+            //     json_decode(json_encode($vv->body()),true)
+            // );
+
             $kundali_pdf_data = KundaliPdfData::where('kundali_id', $kundaliId)
                 ->where('name', $name)
                 ->where('date', $date)
@@ -616,6 +656,17 @@ class KundaliController extends Controller
                 ->where('antardasha', $antardasha)
                 ->where('paryantardasha', $paryantardasha)
                 ->where('shookshamadasha', $shookshamadasha)
+                ->where('divChart',$divChart)
+                ->where('divChartResponseType',$divChartResponseType)
+                ->where('divChartTransitDate',$divChartTransitDate)
+                ->where('divChartYear',$divChartYear)
+                ->where('chartImageColor',$chartImageColor)
+                ->where('chartImageStyle',$chartImageStyle)
+                ->where('chartImageFontSize',$chartImageFontSize)
+                ->where('chartImageFontStyle',$chartImageFontStyle)
+                ->where('chartImageSize',$chartImageSize)
+                ->where('chartImageStroke',$chartImageStroke)
+                ->where('chartImageFormat',$chartImageFormat)
                 ->orderByDesc('id')
                 ->first();
                 
@@ -756,16 +807,6 @@ class KundaliController extends Controller
                     ]),
                     
                     $pool->as('kpHouses')->get('https://api.vedicastroapi.com/v3-json/extended-horoscope/kp-houses', [
-                        'dob' => $birthDate,
-                        'tob' => $birthTime,
-                        'tz' => $timezone,
-                        'lat' => $latitude,
-                        'lon' => $longitude,
-                        'api_key' => $api_key,
-                        'lang' => $language,
-                    ]),
-                    
-                    $pool->as('kpPlanets')->get('https://api.vedicastroapi.com/v3-json/extended-horoscope/kp-planets', [
                         'dob' => $birthDate,
                         'tob' => $birthTime,
                         'tz' => $timezone,
@@ -978,43 +1019,225 @@ class KundaliController extends Controller
                         'api_key' => $api_key,
                         'lang' => $language,
                     ]),
+
+                    $pool->as('mahaDasha')->get('https://api.vedicastroapi.com/v3-json/dashas/maha-dasha', [
+                        'dob' => $birthDate,
+                        'tob' => $birthTime,
+                        'tz' => $timezone,
+                        'lat' => $latitude,
+                        'lon' => $longitude,
+                        'api_key' => $api_key,
+                        'lang' => $language,
+                    ]),
+
+                    $pool->as('antarDasha')->get('https://api.vedicastroapi.com/v3-json/dashas/antar-dasha', [
+                        'dob' => $birthDate,
+                        'tob' => $birthTime,
+                        'tz' => $timezone,
+                        'lat' => $latitude,
+                        'lon' => $longitude,
+                        'api_key' => $api_key,
+                        'lang' => $language,
+                    ]),
+
+                    $pool->as('paryantarDasha')->get('https://api.vedicastroapi.com/v3-json/dashas/paryantar-dasha', [
+                        'dob' => $birthDate,
+                        'tob' => $birthTime,
+                        'tz' => $timezone,
+                        'lat' => $latitude,
+                        'lon' => $longitude,
+                        'api_key' => $api_key,
+                        'lang' => $language,
+                    ]),
+
+                    $pool->as('mahaDashaPredictions')->get('https://api.vedicastroapi.com/v3-json/dashas/maha-dasha-predictions', [
+                        'dob' => $birthDate,
+                        'tob' => $birthTime,
+                        'tz' => $timezone,
+                        'lat' => $latitude,
+                        'lon' => $longitude,
+                        'api_key' => $api_key,
+                        'lang' => $language,
+                    ]),
+                    
+
+                    $pool->as('d1Chart')->get('https://api.vedicastroapi.com/v3-json/horoscope/divisional-charts', [
+                        'dob' => $birthDate,
+                        'tob' => $birthTime,
+                        'tz' => $timezone,
+                        'lat' => $latitude,
+                        'lon' => $longitude,
+                        'div' => $divChart,
+                        'api_key' => $api_key,
+                        'lang' => $language,
+                        'response_type' => $divChartResponseType,
+                        'year' => $divChartYear,
+                        'transit_date' => $divChartTransitDate,
+                    ]),
+
+                    $pool->as('d9Chart')->get('https://api.vedicastroapi.com/v3-json/horoscope/chart-image', [
+                        'dob' => $birthDate,
+                        'tob' => $birthTime,
+                        'tz' => $timezone,
+                        'lat' => $latitude,
+                        'lon' => $longitude,
+                        'div' => $divChart,
+                        'api_key' => $api_key,
+                        'lang' => $language,
+                        'color' => $chartImageColor,
+                        'style' => $chartImageStyle,
+                        'font_size' => $chartImageFontSize,
+                        'font_style' => $chartImageFontStyle,
+                        'size' => $chartImageSize,
+                        'stroke' => $chartImageStroke,
+                        'format' => $chartImageFormat,
+                        'year' => $divChartYear,
+                        'transit_date' => $divChartTransitDate,
+                    ]),
+
+                    
                 ]);
     
-                $panchang = $responses['panchang']->json() ?? null;
-                $planetDetails = $responses['planetDetails']->json() ?? null;
-                $ascendantReport = $responses['ascendantReport']->json() ?? null;
-                $planetReport = $responses['planetReport']->json() ?? null;
-                $findMoonSign = $responses['findMoonSign']->json() ?? null;
-                $findSunSign = $responses['findSunSign']->json() ?? null;
-                $findAcendant = $responses['findAcendant']->json() ?? null;
-                $extendedKundliDetails = $responses['extendedKundliDetails']->json() ?? null;
-                $gemSuggestion = $responses['gemSuggestion']->json() ?? null;
-                $numeroTable = $responses['numeroTable']->json() ?? null;
-                $rudrakshSuggestion = $responses['rudrakshSuggestion']->json() ?? null;
-                $shadBala = $responses['shadBala']->json() ?? null;
-                $friendshipTable = $responses['friendshipTable']->json() ?? null;
-                $kpHouses = $responses['kpHouses']->json() ?? null;
-                $kpPlanets = $responses['kpPlanets']->json() ?? null;
-                $kpPlanets = $responses['kpPlanets']->json() ?? null;
-                $mangalDosh = $responses['mangalDosh']->json() ?? null;
-                $KaalsarpDosh = $responses['KaalsarpDosh']->json() ?? null;
-                $managlikDosh = $responses['managlikDosh']->json() ?? null;
-                $pitraDosh = $responses['pitraDosh']->json() ?? null;
-                $papasamaya = $responses['papasamaya']->json() ?? null;
-                $currentSadeSati = $responses['currentSadeSati']->json() ?? null;
-                $sadeSatiTable = $responses['sadeSatiTable']->json() ?? null;
-                $varshapalDetails = $responses['varshapalDetails']->json() ?? null;
-                $varshapalMonthChart = $responses['varshapalMonthChart']->json() ?? null;
-                $varshapalYearChart = $responses['varshapalYearChart']->json() ?? null;
-                $yogaList = $responses['yogaList']->json() ?? null;
-                $charDashaCurrent = $responses['charDashaCurrent']->json() ?? null;
-                $charDashaMain = $responses['charDashaMain']->json() ?? null;
-                $charDashaSub = $responses['charDashaSub']->json() ?? null;
-                $yoginiDashaMain = $responses['yoginiDashaMain']->json() ?? null;
-                $yoginiDashaSub = $responses['yoginiDashaSub']->json() ?? null;
-                $specificDasha = $responses['specificDasha']->json() ?? null;
-                $currentMahadashaFull = $responses['currentMahadashaFull']->json() ?? null;
-                $currentMahadasha = $responses['currentMahadasha']->json() ?? null;
+                $panchang = $responses['panchang'];
+                $planetDetails = $responses['planetDetails'];
+                $ascendantReport = $responses['ascendantReport'];
+                $planetReport = $responses['planetReport'];
+                $findMoonSign = $responses['findMoonSign'];
+                $findSunSign = $responses['findSunSign'];
+                $findAcendant = $responses['findAcendant'];
+                $extendedKundliDetails = $responses['extendedKundliDetails'];
+                $gemSuggestion = $responses['gemSuggestion'];
+                $numeroTable = $responses['numeroTable'];
+                $rudrakshSuggestion = $responses['rudrakshSuggestion'];
+                $shadBala = $responses['shadBala'];
+                $friendshipTable = $responses['friendshipTable'];
+                $kpHouses = $responses['kpHouses'];
+                $kpPlanets = $responses['kpPlanets'];
+                $mangalDosh = $responses['mangalDosh'];
+                $KaalsarpDosh = $responses['KaalsarpDosh'];
+                $managlikDosh = $responses['managlikDosh'];
+                $pitraDosh = $responses['pitraDosh'];
+                $papasamaya = $responses['papasamaya'];
+                $currentSadeSati = $responses['currentSadeSati'];
+                $sadeSatiTable = $responses['sadeSatiTable'];
+                $varshapalDetails = $responses['varshapalDetails'];
+                $varshapalMonthChart = $responses['varshapalMonthChart'];
+                $varshapalYearChart = $responses['varshapalYearChart'];
+                $yogaList = $responses['yogaList'];
+                $charDashaCurrent = $responses['charDashaCurrent'];
+                $charDashaMain = $responses['charDashaMain'];
+                $charDashaSub = $responses['charDashaSub'];
+                $yoginiDashaMain = $responses['yoginiDashaMain'];
+                $yoginiDashaSub = $responses['yoginiDashaSub'];
+                $specificDasha = $responses['specificDasha'];
+                $currentMahadashaFull = $responses['currentMahadashaFull'];
+                $currentMahadasha = $responses['currentMahadasha'];
+
+                $d1Chart = $responses['d1Chart'];
+                $d9Chart = $responses['d9Chart'];
+                $mahaDashaData = $responses['mahaDasha'];
+                $antarDashaData = $responses['antarDasha'];
+                $paryantarDashaData = $responses['paryantarDasha'];
+                $mahaDashaPredictions = $responses['mahaDashaPredictions'];
+                
+                $validateApiCalls = [
+                    !$panchang->ok() ? ['name' => 'panchang', 'error' =>$panchang->json()] : null,
+                    !$planetDetails->ok() ? ['name' => 'planetDetails', 'error' =>$planetDetails->json()] : null,
+                    !$ascendantReport->ok() ? ['name' => 'ascendantReport', 'error' =>$ascendantReport->json()] : null,
+                    !$planetReport->ok() ? ['name' => 'planetReport', 'error' =>$planetReport->json()] : null,
+                    !$findMoonSign->ok() ? ['name' => 'findMoonSign', 'error' =>$findMoonSign->json()] : null,
+                    !$findSunSign->ok() ? ['name' => 'findSunSign', 'error' =>$findSunSign->json()] : null,
+                    !$findAcendant->ok() ? ['name' => 'findAcendant', 'error' =>$findAcendant->json()] : null,
+                    !$extendedKundliDetails->ok() ? ['name' => 'extendedKundliDetails', 'error' =>$extendedKundliDetails->json()] : null,
+                    !$gemSuggestion->ok() ? ['name' => 'gemSuggestion', 'error' =>$gemSuggestion->json()] : null,
+                    !$numeroTable->ok() ? ['name' => 'numeroTable', 'error' =>$numeroTable->json()] : null,
+                    !$rudrakshSuggestion->ok() ? ['name' => 'rudrakshSuggestion', 'error' =>$rudrakshSuggestion->json()] : null,
+                    !$shadBala->ok() ? ['name' => 'shadBala', 'error' =>$shadBala->json()] : null,
+                    !$friendshipTable->ok() ? ['name' => 'friendshipTable', 'error' =>$friendshipTable->json()] : null,
+                    !$kpHouses->ok() ? ['name' => 'kpHouses', 'error' =>$kpHouses->json()] : null,
+                    !$kpPlanets->ok() ? ['name' => 'kpPlanets', 'error' =>$kpPlanets->json()] : null,
+                    !$mangalDosh->ok() ? ['name' => 'mangalDosh', 'error' =>$mangalDosh->json()] : null,
+                    !$KaalsarpDosh->ok() ? ['name' => 'KaalsarpDosh', 'error' =>$KaalsarpDosh->json()] : null,
+                    !$managlikDosh->ok() ? ['name' => 'managlikDosh', 'error' =>$managlikDosh->json()] : null,
+                    !$pitraDosh->ok() ? ['name' => 'pitraDosh', 'error' =>$pitraDosh->json()] : null,
+                    !$papasamaya->ok() ? ['name' => 'papasamaya', 'error' =>$papasamaya->json()] : null,
+                    !$currentSadeSati->ok() ? ['name' => 'currentSadeSati', 'error' =>$currentSadeSati->json()] : null,
+                    !$sadeSatiTable->ok() ? ['name' => 'sadeSatiTable', 'error' =>$sadeSatiTable->json()] : null,
+                    !$varshapalDetails->ok() ? ['name' => 'varshapalDetails', 'error' =>$varshapalDetails->json()] : null,
+                    !$varshapalMonthChart->ok() ? ['name' => 'varshapalMonthChart', 'error' =>$varshapalMonthChart->json()] : null,
+                    !$varshapalYearChart->ok() ? ['name' => 'varshapalYearChart', 'error' =>$varshapalYearChart->json()] : null,
+                    !$yogaList->ok() ? ['name' => 'yogaList', 'error' =>$yogaList->json()] : null,
+                    !$charDashaCurrent->ok() ? ['name' => 'charDashaCurrent', 'error' =>$charDashaCurrent->json()] : null,
+                    !$charDashaMain->ok() ? ['name' => 'charDashaMain', 'error' =>$charDashaMain->json()] : null,
+                    !$charDashaSub->ok() ? ['name' => 'charDashaSub', 'error' =>$charDashaSub->json()] : null,
+                    !$yoginiDashaMain->ok() ? ['name' => 'yoginiDashaMain', 'error' =>$yoginiDashaMain->json()] : null,
+                    !$yoginiDashaSub->ok() ? ['name' => 'yoginiDashaSub', 'error' =>$yoginiDashaSub->json()] : null,
+                    !$specificDasha->ok() ? ['name' => 'specificDasha', 'error' =>$specificDasha->json()] : null,
+                    !$currentMahadashaFull->ok() ? ['name' => 'currentMahadashaFull', 'error' =>$currentMahadashaFull->json()] : null,
+                    !$currentMahadasha->ok() ? ['name' => 'currentMahadasha', 'error' =>$currentMahadasha->json()] : null,
+                    
+                    !$d1Chart->ok() ? ['name' => 'd1Chart', 'error' =>$d1Chart->json()] : null,
+                    !$d9Chart->ok() ? ['name' => 'd9Chart', 'error' =>$d9Chart->json()] : null,
+                    !$mahaDashaData->ok() ? ['name' => 'mahaDasha', 'error' =>$mahaDashaData->json()] : null,
+                    !$antarDashaData->ok() ? ['name' => 'antarDasha', 'error' =>$antarDashaData->json()] : null,
+                    !$paryantarDashaData->ok() ? ['name' => 'paryantarDasha', 'error' =>$paryantarDashaData->json()] : null,
+                    !$mahaDashaPredictions->ok() ? ['name' => 'mahaDashaPredictions', 'error' =>$mahaDashaPredictions->json()] : null,
+                ];
+                
+                $badResponse = array_values(array_filter($validateApiCalls, function($value) {
+                    return $value;
+                }));
+
+                if(count($badResponse)){
+                    return response()->json([
+                        'error' => true,
+                        'message' => "Something went wrong",
+                        'errorData' => $badResponse,
+                        'status' => 400,
+                    ], 400);
+                }
+
+                $panchang = $panchang->json();
+                $planetDetails = $planetDetails->json();
+                $ascendantReport = $ascendantReport->json();
+                $planetReport = $planetReport->json();
+                $findMoonSign = $findMoonSign->json();
+                $findSunSign = $findSunSign->json();
+                $findAcendant = $findAcendant->json();
+                $extendedKundliDetails = $extendedKundliDetails->json();
+                $gemSuggestion = $gemSuggestion->json();
+                $numeroTable = $numeroTable->json();
+                $rudrakshSuggestion = $rudrakshSuggestion->json();
+                $shadBala = $shadBala->json();
+                $friendshipTable = $friendshipTable->json();
+                $kpHouses = $kpHouses->json();
+                $kpPlanets = $kpPlanets->json();
+                $mangalDosh = $mangalDosh->json();
+                $KaalsarpDosh = $KaalsarpDosh->json();
+                $managlikDosh = $managlikDosh->json();
+                $pitraDosh = $pitraDosh->json();
+                $papasamaya = $papasamaya->json();
+                $currentSadeSati = $currentSadeSati->json();
+                $sadeSatiTable = $sadeSatiTable->json();
+                $varshapalDetails = $varshapalDetails->json();
+                $varshapalMonthChart = $varshapalMonthChart->json();
+                $varshapalYearChart = $varshapalYearChart->json();
+                $yogaList = $yogaList->json();
+                $charDashaCurrent = $charDashaCurrent->json();
+                $charDashaMain = $charDashaMain->json();
+                $charDashaSub = $charDashaSub->json();
+                $yoginiDashaMain = $yoginiDashaMain->json();
+                $yoginiDashaSub = $yoginiDashaSub->json();
+                $specificDasha = $specificDasha->json();
+                $currentMahadashaFull = $currentMahadashaFull->json();
+                $currentMahadasha = $currentMahadasha->json();
+
+                $d1Chart = $d1Chart->json();
+                $d9Chart = $d9Chart->body();
+                $mahaDashaData = $mahaDashaData->json();
+                $antarDashaData = $antarDashaData->json();
+                $paryantarDashaData = $paryantarDashaData->json();
+                $mahaDashaPredictions = $mahaDashaPredictions->json();
 
                 KundaliPdfData::create([
                     'kundali_id' => $kundaliId,
@@ -1031,6 +1254,18 @@ class KundaliController extends Controller
                     'antardasha' => $antardasha,
                     'paryantardasha' => $paryantardasha,
                     'shookshamadasha' => $shookshamadasha,
+                    'divChart' => $divChart,
+                    'divChartResponseType' => $divChartResponseType,
+                    'divChartTransitDate' => $divChartTransitDate,
+                    'divChartYear' => $divChartYear,
+                    'chartImageColor' => $chartImageColor,
+                    'chartImageStyle' => $chartImageStyle,
+                    'chartImageFontSize' => $chartImageFontSize,
+                    'chartImageFontStyle' => $chartImageFontStyle,
+                    'chartImageSize' => $chartImageSize,
+                    'chartImageStroke' => $chartImageStroke,
+                    'chartImageFormat' => $chartImageFormat,
+
                     'panchang_data' => json_encode($panchang),
                     'planet_details_data' => json_encode($planetDetails),
                     'ascendant_report_data' => json_encode($ascendantReport),
@@ -1065,12 +1300,19 @@ class KundaliController extends Controller
                     'specific_dasha_data' => json_encode($specificDasha),
                     'current_mahadasha_full_data' => json_encode($currentMahadashaFull),
                     'current_mahadasha_data' => json_encode($currentMahadasha),
+
+                    'd1Chart_data' => json_encode($d1Chart),
+                    'd9Chart_data' => json_encode($d9Chart),
+                    'mahaDasha_data' => json_encode($mahaDashaData),
+                    'antarDasha_data' => json_encode($antarDashaData),
+                    'paryantarDasha_data' => json_encode($paryantarDashaData),
+                    'mahaDashaPredictions_data' => json_encode($mahaDashaPredictions),
                 ]);
 
             }
             else{
                 // get saved response
-
+                
                 $panchang = json_decode($kundali_pdf_data->panchang_data, true) ?? null;
                 $planetDetails = json_decode($kundali_pdf_data->planet_details_data, true) ?? null;
                 $ascendantReport = json_decode($kundali_pdf_data->ascendant_report_data, true) ?? null;
@@ -1105,6 +1347,14 @@ class KundaliController extends Controller
                 $specificDasha = json_decode($kundali_pdf_data->specific_dasha_data, true) ?? null;
                 $currentMahadashaFull = json_decode($kundali_pdf_data->current_mahadasha_full_data, true) ?? null;
                 $currentMahadasha = json_decode($kundali_pdf_data->current_mahadasha_data, true) ?? null;
+
+                $d1Chart = json_decode($kundali_pdf_data->d1Chart_data, true) ?? null;
+                $d9Chart = json_decode($kundali_pdf_data->d9Chart_data, true) ?? null;
+                $mahaDashaData = json_decode($kundali_pdf_data->mahaDasha_data, true) ?? null;
+                $antarDashaData = json_decode($kundali_pdf_data->antarDasha_data, true) ?? null;
+                $paryantarDashaData = json_decode($kundali_pdf_data->paryantarDasha_data, true) ?? null;
+                $mahaDashaPredictions = json_decode($kundali_pdf_data->mahaDashaPredictions_data, true) ?? null;
+                
             }
 
             return response()->json([
@@ -1126,7 +1376,6 @@ class KundaliController extends Controller
                     'friendshipTable' => $friendshipTable,
                     'kpHouses' => $kpHouses,
                     'kpPlanets' => $kpPlanets,
-                    'kpPlanets' => $kpPlanets,
                     'mangalDosh' => $mangalDosh,
                     'KaalsarpDosh' => $KaalsarpDosh,
                     'managlikDosh' => $managlikDosh,
@@ -1146,6 +1395,12 @@ class KundaliController extends Controller
                     'specificDasha' => $specificDasha,
                     'currentMahadashaFull' => $currentMahadashaFull,
                     'currentMahadasha' => $currentMahadasha,
+                    'd1Chart' => $d1Chart,
+                    'd9Chart' => $d9Chart,
+                    'mahaDasha' => $mahaDashaData,
+                    'antarDasha' => $antarDashaData,
+                    'paryantarDasha' => $paryantarDashaData,
+                    'mahaDashaPredictions' => $mahaDashaPredictions,
                 ]
             ], 200);
 
@@ -1543,7 +1798,7 @@ class KundaliController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => false,
+                'error' => true,
                 'message' => $e->getMessage(),
                 'status' => 500,
             ], 500);

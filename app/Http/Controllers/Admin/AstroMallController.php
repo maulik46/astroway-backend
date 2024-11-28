@@ -55,6 +55,9 @@ class AstroMallController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
                         $imageName = 'productCategory_' . $productCategory->id;
                         $path = DESTINATIONPATH . $imageName . $time . '.png';
@@ -185,6 +188,9 @@ class AstroMallController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
                             $imageName = 'productCategory_' . $request->filed_id;
                             $path = DESTINATIONPATH . $imageName . $time . '.png';
@@ -272,6 +278,9 @@ class AstroMallController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
                         $imageName = 'astromallProduct_' . $astromallProduct->id;
                         $path = DESTINATIONPATH . $imageName . $time . '.png';
@@ -362,6 +371,9 @@ class AstroMallController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
                             $imageName = 'product_' . $request->field_id;
                             $path = DESTINATIONPATH . $imageName . $time . '.png';

@@ -13,7 +13,7 @@ use App\Models\AdminModel\Banner;
 use Carbon\Carbon;
 
 define('LOGINPATH', '/admin/login');
-
+define('DESTINATIONPATH', 'public/storage/images/');
 class BannerController extends Controller
 {
     public $path;
@@ -46,8 +46,11 @@ class BannerController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'banner_' . $banner->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($path);
@@ -132,8 +135,11 @@ class BannerController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
-                            $destinationpath = 'public/storage/images/';
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'banner_' . $req->filed_id;
                             $path = $destinationpath . $imageName . $time . '.png';
                             File::delete($banner->bannerImage);

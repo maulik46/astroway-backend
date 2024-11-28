@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 define('LOGINPATH', '/admin/login');
+define('DESTINATIONPATH', 'public/storage/images/');
 class DailyHoroScopeInsightController extends Controller
 {
     public function getDailyHoroscopeInsight(Request $request)
@@ -77,7 +78,10 @@ class DailyHoroScopeInsightController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
-                        $destinationpath = 'public/storage/images/';
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'dailyhoroscope_' . $id . $time;
                         $path = $destinationpath . $imageName . '.png';
                         File::delete($path);
@@ -118,7 +122,10 @@ class DailyHoroScopeInsightController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
-                        $destinationpath = 'public/storage/images/';
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'dailyhoroscope_' . $req->id . $time;
                         $path = $destinationpath . $imageName . '.png';
                         File::delete($insight[0]->coverImage);

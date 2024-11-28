@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
+define('DESTINATIONPATH', 'public/storage/images/');
 class UserReportController extends Controller
 {
     //Add a report
@@ -331,7 +332,10 @@ class UserReportController extends Controller
                     if (Str::contains($req->reportFile, 'storage')) {
                         $path = $req->reportFile;
                     } else {
-                        $destinationpath = 'public/storage/reports/';
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
+                        $destinationpath = DESTINATIONPATH;
                         $time = Carbon::now()->timestamp;
                         $imageName = 'report_' . $req->id;
                         $path = $destinationpath . $imageName . $time . '.pdf';

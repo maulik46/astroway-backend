@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use App\Models\MstControl;
 
+define('DESTINATIONPATH', 'public/storage/images/');
 class SystemFlagController extends Controller
 {
     public function getSystemFlag(Request $req)
@@ -76,9 +77,12 @@ class SystemFlagController extends Controller
                                 if (array_key_exists('valueType', $flagvalue)) {
                                     if ($flagvalue['valueType'] == 'File') {
                                         $sysFile = DB::Table('systemflag')->where('name', $flagvalue['name'])->first();
+                                        if (!File::exists(DESTINATIONPATH)) {
+                                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                                        }
                                         $time = Carbon::now()->timestamp;
                                         $flagvalue['value'] = base64_encode(file_get_contents($flagvalue['value']));
-                                        $destinationpath = 'public/storage/images/';
+                                        $destinationpath = DESTINATIONPATH;
                                         $imageName = $flagvalue['name'];
                                         $path = $destinationpath . $imageName . $time . '.png';
                                         File::delete($sysFile->value);
@@ -89,10 +93,13 @@ class SystemFlagController extends Controller
                                         $flagvalue['value'] = implode(',', $flagvalue['value']);
                                     }
                                     if ($flagvalue['valueType'] == 'Video') {
+                                        if (!File::exists(DESTINATIONPATH)) {
+                                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                                        }
                                         $time = Carbon::now()->timestamp;
                                         $sysFile = DB::Table('systemflag')->where('name', $flagvalue['name'])->first();
                                         $flagvalue['value'] = base64_encode(file_get_contents($flagvalue['value']));
-                                        $destinationpath = 'public/storage/images/';
+                                        $destinationpath = DESTINATIONPATH;
                                         $imageName = $flagvalue['name'];
                                         $path = $destinationpath . $imageName . $time . '.mp4';
                                         File::delete($sysFile->value);
@@ -116,9 +123,12 @@ class SystemFlagController extends Controller
                                     if (array_key_exists('valueType', $sys)) {
                                         if ($sys['valueType'] == 'File') {
                                             $sysFile = DB::Table('systemflag')->where('name', $sys['name'])->first();
+                                            if (!File::exists(DESTINATIONPATH)) {
+                                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                                            }
                                             $time = Carbon::now()->timestamp;
                                             $sys['value'] = base64_encode(file_get_contents($sys['value']));
-                                            $destinationpath = 'public/storage/images/';
+                                            $destinationpath = DESTINATIONPATH;
                                             $imageName = $sys['name'];
                                             $path = $destinationpath . $imageName . $time . '.png';
                                             File::delete($sysFile->value);
@@ -130,9 +140,12 @@ class SystemFlagController extends Controller
                                         }
                                         if ($sys['valueType'] == 'Video') {
                                             $sysFile = DB::Table('systemflag')->where('name', $sys['name'])->first();
+                                            if (!File::exists(DESTINATIONPATH)) {
+                                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                                            }
                                             $time = Carbon::now()->timestamp;
                                             $sys['value'] = base64_encode(file_get_contents($sys['value']));
-                                            $destinationpath = 'public/storage/images/';
+                                            $destinationpath = DESTINATIONPATH;
                                             $imageName = $sys['name'];
                                             $path = $destinationpath . $imageName . $time . '.mp4';
                                             File::delete($sysFile->value);

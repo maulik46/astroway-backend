@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 define('LOGINPATH', '/admin/login');
+define('DESTINATIONPATH', 'public/storage/images/');
 class HororScopeSignController extends Controller
 {
     //Add HororScope API
@@ -51,8 +52,11 @@ class HororScopeSignController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'sign_' . $hororscopeSign->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($path);
@@ -122,8 +126,11 @@ class HororScopeSignController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
-                            $destinationpath = 'public/storage/images/';
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'sign_' . $req->filed_id;
                             $path = $destinationpath . $imageName . $time . '.png';
                             File::delete($hororScopeSign->image);

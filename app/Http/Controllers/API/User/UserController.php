@@ -99,6 +99,9 @@ class UserController extends Controller
                 if (Str::contains($req->profile, 'storage')) {
                     $path = $req->profile;
                 } else {
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
                     $time = Carbon::now()->timestamp;
                     $imageName = 'profile_' . $user->id;
                     $path = DESTINATIONPATH . $imageName . $time . '.png';
@@ -193,6 +196,9 @@ class UserController extends Controller
 
             $user = User::find($id);
             if ($user) {
+                if (!File::exists(DESTINATIONPATH)) {
+                    File::makeDirectory(DESTINATIONPATH, 0755, true);
+                }
                 $time = Carbon::now()->timestamp;
                 if ($req->profile) {
                     if (Str::contains($req->profile, 'storage')) {
@@ -789,6 +795,9 @@ class UserController extends Controller
             ]);
 
             if ($req->profile) {
+                if (!File::exists(DESTINATIONPATH)) {
+                    File::makeDirectory(DESTINATIONPATH, 0755, true);
+                }
                 $time = Carbon::now()->timestamp;
                 $imageName = 'user_' . $user->id;
                 $path = DESTINATIONPATH . $imageName . $time . '.png';
@@ -912,6 +921,9 @@ class UserController extends Controller
                 if (Str::contains($req->profile, 'storage')) {
                     $path = $req->profile;
                 } else {
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
                     $time = Carbon::now()->timestamp;
                     $imageName = 'profile_' . $id;
                     $path = DESTINATIONPATH . $imageName . $time . '.png';

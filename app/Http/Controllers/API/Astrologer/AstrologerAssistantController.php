@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
+define('DESTINATIONPATH', 'public/storage/images/');
 class AstrologerAssistantController extends Controller
 {
     //Add astrologer assistant
@@ -77,7 +78,10 @@ class AstrologerAssistantController extends Controller
                 if (Str::contains($req->profile, 'storage')) {
                     $path = $req->profile;
                 } else {
-                    $destinationpath = 'public/storage/images/';
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
+                    $destinationpath = DESTINATIONPATH;
                     $imageName = 'astrologerAssistant_' . $astrologerAssistant->id . $time;
                     $path = $destinationpath . $imageName . '.png';
                     File::delete($path);
@@ -209,8 +213,11 @@ class AstrologerAssistantController extends Controller
                 if (Str::contains($req->profile, 'storage')) {
                     $path = $req->profile;
                 } else {
+                    if (!File::exists(DESTINATIONPATH)) {
+                        File::makeDirectory(DESTINATIONPATH, 0755, true);
+                    }
                     $time = Carbon::now()->timestamp;
-                    $destinationpath = 'public/storage/images/';
+                    $destinationpath = DESTINATIONPATH;
                     $imageName = 'astrologerAssistant_' . $req->id . $time;
                     $path = $destinationpath . $imageName . '.png';
                     File::delete($astrologerAssistant->profile);

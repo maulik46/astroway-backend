@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 define('LOGINPATH', '/admin/login');
+define('DESTINATIONPATH', 'public/storage/images/');
 class NewsController extends Controller
 {
     public $path;
@@ -54,8 +55,11 @@ class NewsController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'bannerImage_' . $news->id;
                         $path = $destinationpath . $imageName . $time . '.png';
                         File::delete($path);
@@ -138,8 +142,11 @@ class NewsController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
-                            $destinationpath = 'public/storage/images/';
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'bannerImage_' . $req->filed_id . $time;
                             $path = $destinationpath . $imageName . $time . '.png';
                             File::delete($news->bannerImage);

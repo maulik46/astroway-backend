@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 define('LOGINPATH', '/admin/login');
-
+define('DESTINATIONPATH', 'public/storage/images/');
 class TeamRoleController extends Controller
 {
     public $path;
@@ -275,8 +275,11 @@ class TeamRoleController extends Controller
                     if (Str::contains($profile, 'storage')) {
                         $path = $profile;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
-                        $destinationpath = 'public/storage/images/';
+                        $destinationpath = DESTINATIONPATH;
                         $imageName = 'teamMember_' . $userId;
                         $path = $destinationpath . $imageName . $time . '.png';
                         file_put_contents($path, base64_decode($profile));
@@ -361,8 +364,11 @@ class TeamRoleController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
-                            $destinationpath = 'public/storage/images/';
+                            $destinationpath = DESTINATIONPATH;
                             $imageName = 'teamMember_' . $teamMember->userId;
                             $path = $destinationpath . $imageName . $time . '.png';
                             File::delete($teamMember->profile);

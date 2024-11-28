@@ -53,6 +53,9 @@ class BlogController extends Controller
                     if (Str::contains($image, 'storage')) {
                         $path = $image;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
 
                         $imageName = 'blog_' . $blog->id;
@@ -67,6 +70,9 @@ class BlogController extends Controller
                     if (Str::contains($previewImage, 'storage')) {
                         $previewPath = $previewImage;
                     } else {
+                        if (!File::exists(DESTINATIONPATH)) {
+                            File::makeDirectory(DESTINATIONPATH, 0755, true);
+                        }
                         $time = Carbon::now()->timestamp;
 
                         $imageName = 'blogpreview_' . $blog->id;
@@ -168,6 +174,9 @@ class BlogController extends Controller
                         if (Str::contains($image, 'storage')) {
                             $path = $image;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
 
                             $imageName = 'blog_' . $request->filed_id;
@@ -182,6 +191,9 @@ class BlogController extends Controller
                         if (Str::contains($previewImage, 'storage')) {
                             $previewPath = $previewImage;
                         } else {
+                            if (!File::exists(DESTINATIONPATH)) {
+                                File::makeDirectory(DESTINATIONPATH, 0755, true);
+                            }
                             $time = Carbon::now()->timestamp;
                             $imageName = 'blogpreview_' . $blog->id;
                             $previewPath = DESTINATIONPATH . $imageName . $time . '.png';

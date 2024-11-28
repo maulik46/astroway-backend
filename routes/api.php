@@ -33,6 +33,7 @@ use App\Http\Controllers\API\User\HelpSupportQuestionController;
 use App\Http\Controllers\API\User\HoroController;
 use App\Http\Controllers\API\User\KundaliController;
 use App\Http\Controllers\API\User\KundaliMatchingController;
+use App\Http\Controllers\API\User\KundaliPdfDataController;
 use App\Http\Controllers\API\User\LanguageController;
 use App\Http\Controllers\API\User\LiveUserController;
 use App\Http\Controllers\API\User\MaritalStatusController;
@@ -240,7 +241,7 @@ Route::post('kundali/addForTrackPlanet', [KundaliController::class, 'addForTrack
 Route::post('kundali/getForTrackPlanet', [KundaliController::class, 'getForTrackPlanet']);
 Route::post('get/panchang', [KundaliController::class, 'getPanchang']);
 
-Route::post('getkundaliPdfdata', [KundaliController::class, 'getkundaliPdfdata']);
+Route::post('getkundaliPdfdata', [KundaliPdfDataController::class, 'getkundaliPdfdata']);
 
 //Order address
 Route::post('orderAddress/add', [OrderAddressController::class, 'addOrderAddress'])->name('api.addOrderAddress');
