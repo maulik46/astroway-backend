@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use DateTime;
 
 define('LOGINPATH', '/admin/login');
-define('DATEFORMAT', "(DATE_FORMAT(date,'%Y-%m-%d'))");
+// define('DATEFORMAT', "(DATE_FORMAT(date,'%Y-%m-%d'))");
 
 class HoroscopeController extends Controller
 {
@@ -28,14 +28,19 @@ class HoroscopeController extends Controller
         $this->aDate = $this->getThisWeekDate();
     }
 
-    public function generateDailyHorscope()
+    public function generateDailyHorscope($isRedirect = true)
     {
 
         $currDate = date('Y-m-d');
         $isCreated = Horoscope::where('date',$currDate)->where('type',1)->exists();
 
         if($isCreated){
-            return back()->with('alert','Already generated');
+            if($isRedirect){
+                return back()->with('alert','Already generated');
+            }
+            else {
+                return;
+            }
         }
         // create horscope
 
@@ -85,19 +90,27 @@ class HoroscopeController extends Controller
 
 
         }
-        return back();
-        // return response()->json(['message' => 'Horoscope stored successfully']);
+        if($isRedirect){
+            return back();
+        }
     }
 
-    public function generateWeeklyHorscope()
+    public function generateWeeklyHorscope($isRedirect = true)
     {
-        $isCreated = Horoscope::where('start_date',$this->aDate['startdate'])
-        ->where('end_date',$this->aDate['enddate'])
+        $aDate = $this->getThisWeekDate();
+
+        $isCreated = Horoscope::where('start_date',$aDate['startdate'])
+        ->where('end_date',$aDate['enddate'])
         ->where('type',2)
         ->exists();
 
         if($isCreated){
-            return back()->with('alert','Already generated');
+            if($isRedirect){
+                return back()->with('alert','Already generated');
+            }
+            else {
+                return;
+            }
         }
 
         $api_key=DB::table('systemflag')->where('name','vedicAstroAPI')->first();
@@ -134,24 +147,30 @@ class HoroscopeController extends Controller
                     'bot_response' => $data['response']['bot_response'],
                     'date' => $currDate,
                     'type' => config('constants.WEEKLY_HORSCOPE'),
-                    'start_date' => $this->aDate['startdate'],
-                    'end_date' => $this->aDate['enddate'],
+                    'start_date' => $aDate['startdate'],
+                    'end_date' => $aDate['enddate'],
                     'langcode' => $langvalue,
                 ]);
             }
         }
-        return back();
+        if($isRedirect){
+            return back();
+        }
 
-        // return response()->json(['message' => 'Horoscope stored successfully']);
     }
 
-    public function generateYearlyHorscope()
+    public function generateYearlyHorscope($isRedirect = true)
     {
         $currYear = date('Y');
         $isCreated = Horoscope::whereYear('created_at',$currYear)->where('type',3)->exists();
 
         if($isCreated){
-            return back()->with('alert','Already generated');
+            if($isRedirect){
+                return back()->with('alert','Already generated');
+            }
+            else {
+                return;
+            }
         }
         
         $api_key=DB::table('systemflag')->where('name','vedicAstroAPI')->first();
@@ -209,13 +228,16 @@ class HoroscopeController extends Controller
 
                     $startDate = date('Y-m-d', strtotime($startDate));
                     $endDate = date('Y-m-d', strtotime($endDate));
+
+                    // dd($value);
+
                     Horoscope::create([
                         'zodiac' => $zodiac,
-                        'total_score' => isset($value['score']) ? substr($value['score'], 0 ,-1) : 0,
+                        'total_score' => isset($value['score']) ? $value['score'] : 0,
                         'lucky_color' => isset($value['lucky_color']) ? $value['lucky_color'] : 0,
                         'lucky_color_code' => isset($value['lucky_color_code']) ? $value['lucky_color_code'] : '',
                         'lucky_number' => isset($value['lucky_number']) ? $value['lucky_number'] : 0,
-                        'physique' => isset($value['physique']) ? $value['physique'] : 0,
+                        'physique' => isset($value['physique']) ? $value['physique']['score'] : 0,
                         'status' => isset($value['status']['score']) ? substr($value['status']['score'],0,-1) : 0,
                         'finances' => isset($value['finances']['score']) ? substr($value['finances']['score'],0,-1) : 0,
                         'relationship' => isset($value['relationship']['score']) ? substr($value['relationship']['score'],0,-1) : 0,
@@ -243,7 +265,9 @@ class HoroscopeController extends Controller
 
         }
 
-        return back();
+        if($isRedirect){
+            return back();
+        }
     }
 
     public function getThisWeekDate()
@@ -295,7 +319,7 @@ class HoroscopeController extends Controller
 
                 if ($request->filterDate) {
                     $filterDate = Carbon::parse($request->filterDate)->format('Y-m-d');
-                    $Horoscope->where(DB::raw(DATEFORMAT), $filterDate);
+                    $Horoscope->where(DB::raw("(DATE_FORMAT(date,'%Y-%m-%d'))"), $filterDate);
                 }
 
                 $Horoscope = $Horoscope->skip($paginationStart)->take($this->limit);
@@ -487,11 +511,11 @@ class HoroscopeController extends Controller
 
                 if ($request->filterDate) {
                     $filterDate = Carbon::parse($request->filterDate)->format('Y-m-d');
-                    $dailyHoroscope = $Horoscope->where(DB::raw(DATEFORMAT), $filterDate);
+                    $dailyHoroscope = $Horoscope->where(DB::raw("(DATE_FORMAT(date,'%Y-%m-%d'))"), $filterDate);
 
                 } else {
                     $dt = Carbon::now()->format('Y-m-d');
-                    // $dailyHoroscope = $Horoscope->where(DB::raw(DATEFORMAT), $dt);
+                    // $dailyHoroscope = $Horoscope->where(DB::raw("(DATE_FORMAT(date,'%Y-%m-%d'))"), $dt);
 
                 }
 

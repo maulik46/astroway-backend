@@ -16,15 +16,8 @@ class KundaliPdfDataController extends Controller
     {
         try {
 
-            $api_key = Cache::get('vedicAstroAPI_key');
+            $api_key = DB::table('systemflag')->where('name', 'vedicAstroAPI')->value('value');
             
-            if(!$api_key){
-                // cache for 1 hour
-                $api_key = Cache::remember('vedicAstroAPI_key', 3600, function () {
-                    return DB::table('systemflag')->where('name', 'vedicAstroAPI')->value('value');
-                });
-            }
-
             if (!$api_key) {
                 return response()->json([
                     'error' => false,
